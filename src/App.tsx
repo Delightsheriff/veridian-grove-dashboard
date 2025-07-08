@@ -1,14 +1,29 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { BrowserRouter, Route, Routes } from "react-router";
+import PageNotFound from "./pages/404";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60, // 1 minute
+    },
+  },
+});
+
 function App() {
   return (
     <>
-      <h1 className="text-2xl font-bold">Welcome to My App</h1>
-      <p className="font-bold">This is a simple React application.</p>
-      <button
-        className="bg-blue-500 text-white font-bold py-2 px-4 rounded"
-        onClick={() => alert("Button clicked!")}
-      >
-        Click Me!
-      </button>
+      <QueryClientProvider client={queryClient}>
+        <ReactQueryDevtools initialIsOpen={false} />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<p>Home Page</p>} />
+            <Route path="/about" element={<p>About Page</p>} />
+            <Route path="*" element={<PageNotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </QueryClientProvider>
     </>
   );
 }
