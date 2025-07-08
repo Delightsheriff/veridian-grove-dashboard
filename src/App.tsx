@@ -5,6 +5,7 @@ import PageNotFound from "./pages/404";
 import Login from "./pages/Login";
 import { ThemeProvider } from "./components/theme-provider";
 import { Toaster } from "sonner";
+import AppLayout from "./components/AppLayout";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,7 +23,14 @@ function App() {
           <ReactQueryDevtools initialIsOpen={false} />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<p>Home Page</p>} />
+              <Route element={<AppLayout />}>
+                <Route index element={<div>Home Page</div>} />
+                <Route path="/bookings" element={<div>Bookings Page</div>} />
+                <Route path="/cabins" element={<div>Cabins Page</div>} />
+                <Route path="/users" element={<div>Users Page</div>} />
+                <Route path="/settings" element={<div>Settings Page</div>} />
+                <Route path="/account" element={<div>Account Page</div>} />
+              </Route>
               <Route path="/login" element={<Login />} />
               <Route path="*" element={<PageNotFound />} />
             </Routes>
