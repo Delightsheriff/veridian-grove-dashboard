@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import { ThemeProvider } from "./components/theme-provider";
 import { Toaster } from "sonner";
 import AppLayout from "./components/AppLayout";
+import Suites from "./pages/Suites";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,7 +27,7 @@ function App() {
               <Route element={<AppLayout />}>
                 <Route index element={<div>Home Page</div>} />
                 <Route path="/bookings" element={<div>Bookings Page</div>} />
-                <Route path="/suites" element={<div>Suites Page</div>} />
+                <Route path="/suites" element={<Suites />} />
                 <Route path="/users" element={<div>Users Page</div>} />
                 <Route path="/settings" element={<div>Settings Page</div>} />
                 <Route path="/account" element={<div>Account Page</div>} />
