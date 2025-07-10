@@ -26,7 +26,7 @@ function App() {
               <Route element={<AppLayout />}>
                 <Route index element={<div>Home Page</div>} />
                 <Route path="/bookings" element={<div>Bookings Page</div>} />
-                <Route path="/cabins" element={<div>Cabins Page</div>} />
+                <Route path="/suites" element={<div>Suites Page</div>} />
                 <Route path="/users" element={<div>Users Page</div>} />
                 <Route path="/settings" element={<div>Settings Page</div>} />
                 <Route path="/account" element={<div>Account Page</div>} />

@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { useMoveBack } from "@/hooks/useMoveback";
 import { MoveLeft } from "lucide-react";
+import { Link } from "react-router";
 
 export default function PageNotFound() {
-  const moveBack = useMoveBack();
+  // const moveBack = useMoveBack();
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Left Atmospheric Panel */}
@@ -39,11 +39,14 @@ export default function PageNotFound() {
 
               <Button
                 size="lg"
+                asChild
                 className="bg-green-700 hover:bg-green-800 dark:bg-green-600 dark:hover:bg-green-700 text-white px-8 py-3 text-base font-medium"
-                onClick={moveBack}
+                // onClick={moveBack}
               >
-                <MoveLeft className="mr-2 h-5 w-5" />
-                Back to Dashboard
+                <Link to="/" className="flex items-center gap-2">
+                  <MoveLeft className="w-5 h-5" />
+                  Return Home
+                </Link>
               </Button>
             </CardContent>
           </Card>
