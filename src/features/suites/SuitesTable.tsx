@@ -8,13 +8,21 @@ import {
 } from "@/components/ui/table";
 import { BedDouble } from "lucide-react";
 import SuiteTableRow from "./SuitesTableRow";
-import type { Suite } from "@/interface/suites";
-import { suitesData } from "../suites-data";
 import { useSearchParams } from "react-router";
+import { useSuites } from "./useSuites";
 
 export default function SuitesTable() {
-  const suites: Suite[] = suitesData; // This should be replaced with actual data fetching logic
+  const { isPending, suites } = useSuites();
+  // const suites: Suite[] = suitesData; // This should be replaced with actual data fetching logic
   const [searchParams] = useSearchParams();
+
+  if (isPending) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p>Loading suites...</p>
+      </div>
+    );
+  }
 
   const filter = searchParams.get("filter") || "all";
   const sort = searchParams.get("sort") || "name-asc";
@@ -22,15 +30,15 @@ export default function SuitesTable() {
   // Filter logic
   let filteredSuites = suites;
   if (filter === "with-discount") {
-    filteredSuites = suites.filter((suite) => suite.discount > 0);
+    filteredSuites = suites?.filter((suite) => suite.discount > 0);
   } else if (filter === "no-discount") {
-    filteredSuites = suites.filter((suite) => suite.discount === 0);
+    filteredSuites = suites?.filter((suite) => suite.discount === 0);
   } else if (filter === "available") {
-    filteredSuites = suites.filter((suite) => suite.is_available);
+    filteredSuites = suites?.filter((suite) => suite.is_available);
   }
 
   // Sort logic
-  const sortedSuites = [...filteredSuites];
+  const sortedSuites = [...(filteredSuites || [])];
   switch (sort) {
     case "name-asc":
       sortedSuites.sort((a, b) => a.name.localeCompare(b.name));
