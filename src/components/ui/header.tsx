@@ -13,13 +13,15 @@ import { SidebarContent } from "./sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { useNavigate } from "react-router";
 import DarkModeToggle from "./darkModeToggle";
+import { useState } from "react";
 
 export default function Header() {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
   return (
     <header className="flex h-16 items-center justify-between border-b px-4 lg:px-6">
       {/* Mobile Menu Trigger */}
-      <Sheet>
+      <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
           <Button variant="ghost" size="icon" className="lg:hidden">
             <PanelLeft className="h-5 w-5" />
@@ -27,7 +29,7 @@ export default function Header() {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="p-0">
-          <SidebarContent />
+          <SidebarContent onNavigate={() => setOpen(false)} />
         </SheetContent>
       </Sheet>
 

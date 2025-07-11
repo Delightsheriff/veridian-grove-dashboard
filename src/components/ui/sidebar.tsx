@@ -1,7 +1,7 @@
 import { navigationItems } from "@/lib/navlinks";
 import { NavLink } from "react-router";
 
-export function SidebarContent() {
+export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <div className="flex h-full flex-col bg-gradient-to-b from-green-800 to-green-950 dark:from-green-900 dark:to-gray-950">
       {/* Logo */}
@@ -25,6 +25,7 @@ export function SidebarContent() {
                     isActive ? "bg-white/10" : ""
                   }`
                 }
+                onClick={onNavigate}
               >
                 <Icon className="mr-3 h-4 w-4" />
                 {item.label}
