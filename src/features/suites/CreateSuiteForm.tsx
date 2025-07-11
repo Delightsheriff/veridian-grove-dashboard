@@ -187,6 +187,7 @@ export default function CreateSuiteForm({
             placeholder="e.g., The Royal Penthouse"
             value={formData.name}
             onChange={(e) => handleInputChange("name", e.target.value)}
+            className=""
           />
           {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
         </div>
