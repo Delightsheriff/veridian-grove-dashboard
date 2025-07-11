@@ -8,7 +8,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { TableCell, TableRow } from "@/components/ui/table";
 import type { Suite } from "@/interface/suites";
-import { MoreHorizontal, Edit, Copy, Trash2 } from "lucide-react";
+import { MoreHorizontal, Copy, Trash2 } from "lucide-react";
+import { EditSuiteDialog } from "./suite-dialog";
 
 interface SuiteTableRowProps {
   suite: Suite;
@@ -88,9 +89,13 @@ export default function SuiteTableRow({ suite }: SuiteTableRowProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>
-              <Edit className="mr-2 h-4 w-4" />
-              Edit suite
+            <DropdownMenuItem asChild>
+              <EditSuiteDialog
+                suite={suite}
+                onSubmit={(data) => {
+                  console.log("Edited suite:", data);
+                }}
+              />
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Copy className="mr-2 h-4 w-4" />

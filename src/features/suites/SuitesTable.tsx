@@ -9,9 +9,10 @@ import {
 import { BedDouble } from "lucide-react";
 import SuiteTableRow from "./SuitesTableRow";
 import type { Suite } from "@/interface/suites";
+import { suitesData } from "../suites-data";
 
 export default function SuitesTable() {
-  const suites: Suite[] = []; // This should be replaced with actual data fetching logic
+  const suites: Suite[] = suitesData; // This should be replaced with actual data fetching logic
   return (
     <>
       {suites.length > 0 ? (
