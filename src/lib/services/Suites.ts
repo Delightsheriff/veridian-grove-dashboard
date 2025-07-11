@@ -8,3 +8,12 @@ export async function getSuites() {
   }
   return suites;
 }
+
+export async function deleteSuite(suiteId: string) {
+  const { error } = await supabase.from("suites").delete().eq("id", suiteId);
+  if (error) {
+    console.error("Error deleting suite:", error);
+    throw error;
+  }
+  return true;
+}

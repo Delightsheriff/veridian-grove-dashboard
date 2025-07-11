@@ -12,6 +12,9 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import type { Suite } from "@/interface/suites";
 import { MoreHorizontal, Copy, Trash2 } from "lucide-react";
 import { EditSuiteDialog } from "./suite-dialog";
+import { DeleteSuiteDialog } from "./delete-suite-dialog";
+import { useDeleteSuite } from "./useSuites";
+import { useState } from "react";
 
 interface SuiteTableRowProps {
   suite: Suite;
@@ -24,6 +27,10 @@ export default function SuiteTableRow({ suite }: SuiteTableRowProps) {
       currency: "USD",
     }).format(amount);
   };
+
+  const { deleteSuite } = useDeleteSuite();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
   return (
     <TableRow className="min-w-0">
       {/* Image Cell - Hidden on small and medium screens */}
@@ -102,12 +109,22 @@ export default function SuiteTableRow({ suite }: SuiteTableRowProps) {
               <Copy className="mr-2 h-4 w-4" />
               Duplicate suite
             </DropdownMenuItem>
-            <DropdownMenuItem className="text-red-600 dark:text-red-400">
+            <DropdownMenuItem
+              className="text-red-600 dark:text-red-400"
+              onSelect={() => setDeleteDialogOpen(true)}
+            >
               <Trash2 className="mr-2 h-4 w-4" />
               Delete suite
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        {/* Render the dialog outside the dropdown so it stays mounted */}
+        <DeleteSuiteDialog
+          suite={{ id: suite.id, name: suite.name }}
+          onDelete={deleteSuite}
+          open={deleteDialogOpen}
+          setOpen={setDeleteDialogOpen}
+        />
       </TableCell>
     </TableRow>
   );
