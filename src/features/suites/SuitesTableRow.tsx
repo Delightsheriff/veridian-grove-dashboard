@@ -1,3 +1,5 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,65 +24,64 @@ export default function SuiteTableRow({ suite }: SuiteTableRowProps) {
       currency: "USD",
     }).format(amount);
   };
-
   return (
-    <TableRow>
-      {/* Image Cell */}
-      <TableCell>
+    <TableRow className="min-w-0">
+      {/* Image Cell - Hidden on small and medium screens */}
+      <TableCell className="hidden lg:table-cell min-w-0 p-2">
         <img
           src={suite.images[0] || "/placeholder.svg"}
           alt={suite.name}
-          className="w-16 h-16 object-cover rounded-md"
+          className="w-12 h-12 object-cover rounded-md"
         />
       </TableCell>
-
-      {/* Suite Cell */}
-      <TableCell>
-        <div>
-          <div className="font-bold">{suite.name}</div>
-          <div className="text-sm text-muted-foreground">
+      {/* Suite Name Cell */}
+      <TableCell className="min-w-0 p-2 max-w-[320px] overflow-hidden">
+        <div className="min-w-0">
+          <div className="font-semibold truncate max-w-[120px] sm:max-w-[180px] md:max-w-[240px] lg:max-w-[320px] overflow-hidden text-ellipsis whitespace-nowrap">
+            {suite.name}
+          </div>
+          <div className="text-xs sm:text-sm text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis max-w-[180px]">
             Max guests: {suite.max_guests}
           </div>
         </div>
       </TableCell>
-
-      {/* Capacity Cell */}
-      <TableCell>
-        <div className="font-medium">{suite.max_guests}</div>
+      {/* Capacity Cell - Hidden on small and medium screens */}
+      <TableCell className="hidden lg:table-cell min-w-0 p-2 max-w-[80px] overflow-hidden">
+        <div className="font-medium whitespace-nowrap overflow-hidden text-ellipsis max-w-[80px]">
+          {suite.max_guests}
+        </div>
       </TableCell>
-
       {/* Price Cell */}
-      <TableCell>
-        <div className="font-medium">{formatCurrency(suite.regular_price)}</div>
+      <TableCell className="min-w-0 p-2 max-w-[120px] overflow-hidden">
+        <div className="font-medium whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
+          {formatCurrency(suite.regular_price)}
+        </div>
       </TableCell>
-
-      {/* Discount Cell */}
-      <TableCell>
+      {/* Discount Cell - Hidden on small and medium screens */}
+      <TableCell className="hidden lg:table-cell min-w-0 p-2 max-w-[120px] overflow-hidden">
         {suite.discount === 0 ? (
           <span className="text-muted-foreground">—</span>
         ) : (
-          <span className="text-green-600 dark:text-green-400 font-medium">
+          <span className="text-green-600 dark:text-green-400 font-medium whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
             {formatCurrency(suite.discount)}
           </span>
         )}
       </TableCell>
-
       {/* Status Cell */}
-      <TableCell>
+      <TableCell className="min-w-0 p-2 max-w-[120px] overflow-hidden">
         <Badge
           variant="outline"
           className={
             suite.is_available
-              ? "border-green-200 text-green-700 bg-green-50 dark:border-green-800 dark:text-green-400 dark:bg-green-950"
-              : "border-gray-200 text-gray-700 bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-900"
+              ? "border-green-200 text-green-700 bg-green-50 dark:border-green-800 dark:text-green-400 dark:bg-green-950 whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]"
+              : "border-gray-200 text-gray-700 bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-900 whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]"
           }
         >
           {suite.is_available ? "Available" : "Booked"}
         </Badge>
       </TableCell>
-
       {/* Actions Cell */}
-      <TableCell>
+      <TableCell className="min-w-0 p-2 w-8 max-w-[48px] overflow-hidden">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">

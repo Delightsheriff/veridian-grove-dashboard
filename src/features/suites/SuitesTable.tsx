@@ -61,13 +61,16 @@ export default function SuitesTable() {
           <Table className="min-w-full">
             <TableHeader>
               <TableRow>
-                <TableHead>IMAGE</TableHead>
+                {/* Hidden on small and medium screens */}
+                <TableHead className="hidden lg:table-cell">IMAGE</TableHead>
                 <TableHead>SUITE NAME</TableHead>
-                <TableHead>CAPACITY</TableHead>
+                {/* Hidden on small and medium screens */}
+                <TableHead className="hidden lg:table-cell">CAPACITY</TableHead>
                 <TableHead>PRICE</TableHead>
-                <TableHead>DISCOUNT</TableHead>
+                {/* Hidden on small and medium screens */}
+                <TableHead className="hidden lg:table-cell">DISCOUNT</TableHead>
                 <TableHead>AVAILABILITY</TableHead>
-                <TableHead></TableHead>
+                <TableHead></TableHead> {/* Actions column */}
               </TableRow>
             </TableHeader>
             <TableBody>

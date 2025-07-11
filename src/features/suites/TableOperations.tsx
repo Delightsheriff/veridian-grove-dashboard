@@ -27,13 +27,13 @@ export default function TableOperations() {
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1">
       {/* Filter */}
       <Select
         value={searchParams.get("filter") || "all"}
         onValueChange={handleFilterChange}
       >
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-[120px]">
           <SelectValue placeholder="Filter by..." />
         </SelectTrigger>
         <SelectContent>
