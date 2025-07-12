@@ -13,7 +13,7 @@ import type { Suite } from "@/interface/suites";
 import { MoreHorizontal, Copy, Trash2 } from "lucide-react";
 import { EditSuiteDialog } from "./suite-dialog";
 import { DeleteSuiteDialog } from "./delete-suite-dialog";
-import { useDeleteSuite } from "./useSuites";
+import { useCreateEditSuite, useDeleteSuite } from "./useSuites";
 import { useState } from "react";
 
 interface SuiteTableRowProps {
@@ -29,7 +29,15 @@ export default function SuiteTableRow({ suite }: SuiteTableRowProps) {
   };
 
   const { deleteSuite } = useDeleteSuite();
+  const { createEditSuite, isPending: isUpdating } = useCreateEditSuite();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  const handleEditSuite = (data: any) => {
+    createEditSuite({
+      suiteData: data,
+      id: suite.id,
+    });
+  };
 
   return (
     <TableRow className="min-w-0">
@@ -100,9 +108,8 @@ export default function SuiteTableRow({ suite }: SuiteTableRowProps) {
             <DropdownMenuItem asChild>
               <EditSuiteDialog
                 suite={suite}
-                onSubmit={(data) => {
-                  console.log("Edited suite:", data);
-                }}
+                onSubmit={handleEditSuite}
+                isLoading={isUpdating}
               />
             </DropdownMenuItem>
             <DropdownMenuItem>

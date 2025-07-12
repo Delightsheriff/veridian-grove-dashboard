@@ -14,13 +14,15 @@ import {
   type Suite,
   type SuiteFormValues,
 } from "@/interface/suites";
+import { useCreateEditSuite } from "./useSuites";
 import z from "zod"; // Import zod for validation
 
 interface CreateSuiteFormProps {
   defaultValues?: Partial<Suite>;
   isEditing?: boolean;
   onCancel?: () => void;
-  onSubmit: (data: SuiteFormValues) => void;
+  onSubmit?: (data: SuiteFormValues) => void;
+  onSuccess?: () => void;
 }
 
 const featuresList = [
@@ -51,7 +53,10 @@ export default function CreateSuiteForm({
   isEditing = false,
   onCancel,
   onSubmit,
+  onSuccess,
 }: CreateSuiteFormProps) {
+  const { createEditSuite, isPending: isSubmitting } = useCreateEditSuite();
+
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -63,7 +68,6 @@ export default function CreateSuiteForm({
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Update form data when defaultValues change (for editing)
   useEffect(() => {
@@ -148,32 +152,49 @@ export default function CreateSuiteForm({
     }
   };
 
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      description: "",
+      max_guests: "1",
+      regular_price: "0",
+      discount: "0",
+      features: defaultFeatures,
+      images: null,
+    });
+    setErrors({});
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
 
     const validatedData = validateForm();
-    if (validatedData) {
-      try {
-        await onSubmit(validatedData);
-        // Reset form after submit if not editing
-        if (!isEditing) {
-          setFormData({
-            name: "",
-            description: "",
-            max_guests: "1",
-            regular_price: "0",
-            discount: "0",
-            features: defaultFeatures,
-            images: null,
-          });
-        }
-      } catch (error) {
-        console.error("Form submission error:", error);
-      }
-    }
+    if (!validatedData) return;
 
-    setIsSubmitting(false);
+    try {
+      // If onSubmit is provided (for editing), use it; otherwise use the hook directly
+      if (onSubmit) {
+        await onSubmit(validatedData);
+      } else {
+        // For creating new suites
+        await createEditSuite({
+          suiteData: validatedData,
+          id: isEditing ? defaultValues.id : undefined,
+        });
+
+        // Reset form after successful creation
+        if (!isEditing) {
+          resetForm();
+        }
+
+        // Call onSuccess if provided
+        if (onSuccess) {
+          onSuccess();
+        }
+      }
+    } catch (error) {
+      console.error("Form submission error:", error);
+    }
   };
 
   return (
@@ -187,7 +208,7 @@ export default function CreateSuiteForm({
             placeholder="e.g., The Royal Penthouse"
             value={formData.name}
             onChange={(e) => handleInputChange("name", e.target.value)}
-            className=""
+            disabled={isSubmitting}
           />
           {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
         </div>
@@ -201,6 +222,7 @@ export default function CreateSuiteForm({
             placeholder="Brief description of the suite..."
             value={formData.description}
             onChange={(e) => handleInputChange("description", e.target.value)}
+            disabled={isSubmitting}
           />
           {errors.description && (
             <p className="text-sm text-red-500">{errors.description}</p>
@@ -216,6 +238,7 @@ export default function CreateSuiteForm({
             min="1"
             value={formData.max_guests}
             onChange={(e) => handleInputChange("max_guests", e.target.value)}
+            disabled={isSubmitting}
           />
           {errors.max_guests && (
             <p className="text-sm text-red-500">{errors.max_guests}</p>
@@ -232,6 +255,7 @@ export default function CreateSuiteForm({
             min="0"
             value={formData.regular_price}
             onChange={(e) => handleInputChange("regular_price", e.target.value)}
+            disabled={isSubmitting}
           />
           {errors.regular_price && (
             <p className="text-sm text-red-500">{errors.regular_price}</p>
@@ -248,6 +272,7 @@ export default function CreateSuiteForm({
             min="0"
             value={formData.discount}
             onChange={(e) => handleInputChange("discount", e.target.value)}
+            disabled={isSubmitting}
           />
           {errors.discount && (
             <p className="text-sm text-red-500">{errors.discount}</p>
@@ -266,6 +291,7 @@ export default function CreateSuiteForm({
                   onCheckedChange={(checked) =>
                     handleFeatureChange(feature.key, checked)
                   }
+                  disabled={isSubmitting}
                 />
                 <Label
                   htmlFor={feature.key}
@@ -295,6 +321,7 @@ export default function CreateSuiteForm({
               multiple
               accept="image/*"
               onChange={(e) => handleInputChange("images", e.target.files)}
+              disabled={isSubmitting}
               className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 cursor-pointer"
             />
             <p className="text-xs text-muted-foreground px-1">
@@ -316,17 +343,10 @@ export default function CreateSuiteForm({
             if (onCancel) onCancel();
             // Reset form if not editing
             if (!isEditing) {
-              setFormData({
-                name: "",
-                description: "",
-                max_guests: "1",
-                regular_price: "0",
-                discount: "0",
-                features: defaultFeatures,
-                images: null,
-              });
+              resetForm();
             }
           }}
+          disabled={isSubmitting}
         >
           Cancel
         </Button>
