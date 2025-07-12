@@ -11,6 +11,7 @@ import { Edit, Plus } from "lucide-react";
 import CreateSuiteForm from "./CreateSuiteForm";
 import { useState } from "react";
 import type { Suite, SuiteFormValues } from "@/interface/suites";
+import React from "react";
 
 export function CreateSuiteDialog() {
   const [isOpen, setIsOpen] = useState(false);
@@ -49,19 +50,26 @@ export function CreateSuiteDialog() {
 export function EditSuiteDialog({
   suite,
   onSubmit,
+  isLoading,
 }: {
   suite: Suite;
   onSubmit: (data: SuiteFormValues) => void;
+  isLoading?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const defaultValues = {
-    name: suite.name,
-    description: suite.description,
-    max_guests: suite.max_guests,
-    regular_price: suite.regular_price,
-    discount: suite.discount,
-    features: suite.features,
-  };
+
+  // Memoize defaultValues to prevent unnecessary re-renders
+  const defaultValues = React.useMemo(
+    () => ({
+      name: suite.name,
+      description: suite.description,
+      max_guests: suite.max_guests,
+      regular_price: suite.regular_price,
+      discount: suite.discount,
+      features: suite.features,
+    }),
+    [suite]
+  );
 
   const handleCancel = () => setIsOpen(false);
   const handleSubmit = (data: SuiteFormValues) => {
@@ -90,6 +98,7 @@ export function EditSuiteDialog({
           isEditing={true}
           onCancel={handleCancel}
           onSubmit={handleSubmit}
+          isSubmitting={isLoading}
         />
       </DialogContent>
     </Dialog>

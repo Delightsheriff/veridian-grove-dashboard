@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { TableCell, TableRow } from "@/components/ui/table";
-import type { Suite } from "@/interface/suites";
+import type { Suite, SuiteFormValues } from "@/interface/suites";
 import { MoreHorizontal, Copy, Trash2 } from "lucide-react";
 import { EditSuiteDialog } from "./suite-dialog";
 import { DeleteSuiteDialog } from "./delete-suite-dialog";
@@ -32,7 +32,7 @@ export default function SuiteTableRow({ suite }: SuiteTableRowProps) {
   const { createEditSuite, isPending: isUpdating } = useCreateEditSuite();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  const handleEditSuite = (data: any) => {
+  const handleEditSuite = (data: SuiteFormValues) => {
     createEditSuite({
       suiteData: data,
       id: suite.id,

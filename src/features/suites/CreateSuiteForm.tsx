@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,7 @@ interface CreateSuiteFormProps {
   onCancel?: () => void;
   onSubmit?: (data: SuiteFormValues) => void;
   onSuccess?: () => void;
+  isSubmitting?: boolean;
 }
 
 const featuresList = [
@@ -54,8 +55,12 @@ export default function CreateSuiteForm({
   onCancel,
   onSubmit,
   onSuccess,
+  isSubmitting,
 }: CreateSuiteFormProps) {
-  const { createEditSuite, isPending: isSubmitting } = useCreateEditSuite();
+  const { createEditSuite, isPending: isSubmittingHook } = useCreateEditSuite();
+
+  // Memoize defaultFeatures to prevent unnecessary re-renders
+  const memoizedDefaultFeatures = useMemo(() => defaultFeatures, []);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -63,7 +68,7 @@ export default function CreateSuiteForm({
     max_guests: "1",
     regular_price: "0",
     discount: "0",
-    features: defaultFeatures,
+    features: memoizedDefaultFeatures,
     images: null as FileList | null,
   });
 
@@ -79,7 +84,7 @@ export default function CreateSuiteForm({
         regular_price: String(defaultValues.regular_price || 0),
         discount: String(defaultValues.discount || 0),
         features: {
-          ...defaultFeatures,
+          ...memoizedDefaultFeatures,
           ...defaultValues.features,
         },
         images: null,
@@ -91,11 +96,11 @@ export default function CreateSuiteForm({
         max_guests: "1",
         regular_price: "0",
         discount: "0",
-        features: defaultFeatures,
+        features: memoizedDefaultFeatures,
         images: null,
       });
     }
-  }, [defaultValues]);
+  }, [defaultValues, memoizedDefaultFeatures]);
 
   const handleInputChange = (
     field: string,
@@ -159,7 +164,7 @@ export default function CreateSuiteForm({
       max_guests: "1",
       regular_price: "0",
       discount: "0",
-      features: defaultFeatures,
+      features: memoizedDefaultFeatures,
       images: null,
     });
     setErrors({});
@@ -208,7 +213,7 @@ export default function CreateSuiteForm({
             placeholder="e.g., The Royal Penthouse"
             value={formData.name}
             onChange={(e) => handleInputChange("name", e.target.value)}
-            disabled={isSubmitting}
+            disabled={isSubmitting || isSubmittingHook}
           />
           {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
         </div>
@@ -222,7 +227,7 @@ export default function CreateSuiteForm({
             placeholder="Brief description of the suite..."
             value={formData.description}
             onChange={(e) => handleInputChange("description", e.target.value)}
-            disabled={isSubmitting}
+            disabled={isSubmitting || isSubmittingHook}
           />
           {errors.description && (
             <p className="text-sm text-red-500">{errors.description}</p>
@@ -238,7 +243,7 @@ export default function CreateSuiteForm({
             min="1"
             value={formData.max_guests}
             onChange={(e) => handleInputChange("max_guests", e.target.value)}
-            disabled={isSubmitting}
+            disabled={isSubmitting || isSubmittingHook}
           />
           {errors.max_guests && (
             <p className="text-sm text-red-500">{errors.max_guests}</p>
@@ -255,7 +260,7 @@ export default function CreateSuiteForm({
             min="0"
             value={formData.regular_price}
             onChange={(e) => handleInputChange("regular_price", e.target.value)}
-            disabled={isSubmitting}
+            disabled={isSubmitting || isSubmittingHook}
           />
           {errors.regular_price && (
             <p className="text-sm text-red-500">{errors.regular_price}</p>
@@ -272,7 +277,7 @@ export default function CreateSuiteForm({
             min="0"
             value={formData.discount}
             onChange={(e) => handleInputChange("discount", e.target.value)}
-            disabled={isSubmitting}
+            disabled={isSubmitting || isSubmittingHook}
           />
           {errors.discount && (
             <p className="text-sm text-red-500">{errors.discount}</p>
@@ -291,7 +296,7 @@ export default function CreateSuiteForm({
                   onCheckedChange={(checked) =>
                     handleFeatureChange(feature.key, checked)
                   }
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isSubmittingHook}
                 />
                 <Label
                   htmlFor={feature.key}
@@ -321,7 +326,7 @@ export default function CreateSuiteForm({
               multiple
               accept="image/*"
               onChange={(e) => handleInputChange("images", e.target.files)}
-              disabled={isSubmitting}
+              disabled={isSubmitting || isSubmittingHook}
               className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 cursor-pointer"
             />
             <p className="text-xs text-muted-foreground px-1">
@@ -346,16 +351,16 @@ export default function CreateSuiteForm({
               resetForm();
             }
           }}
-          disabled={isSubmitting}
+          disabled={isSubmitting || isSubmittingHook}
         >
           Cancel
         </Button>
         <Button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || isSubmittingHook}
           className="bg-green-700 hover:bg-green-800 dark:bg-green-600 dark:hover:bg-green-700 text-white"
         >
-          {isSubmitting
+          {isSubmitting || isSubmittingHook
             ? isEditing
               ? "Updating..."
               : "Creating..."
