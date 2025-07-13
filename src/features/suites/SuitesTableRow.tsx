@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { TableCell, TableRow } from "@/components/ui/table";
 import type { Suite, SuiteFormValues } from "@/interface/suites";
-import { MoreHorizontal, Copy, Trash2 } from "lucide-react";
+import { MoreHorizontal, Copy, Trash2, Edit } from "lucide-react";
 import { EditSuiteDialog } from "./suite-dialog";
 import { DeleteSuiteDialog } from "./delete-suite-dialog";
 import { useCreateEditSuite, useDeleteSuite } from "./useSuites";
@@ -29,6 +29,7 @@ export default function SuiteTableRow({ suite }: SuiteTableRowProps) {
   const { deleteSuite } = useDeleteSuite();
   const { createEditSuite, isPending: isUpdating } = useCreateEditSuite();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false); // NEW
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleEditSuite = (data: SuiteFormValues) => {
@@ -104,12 +105,14 @@ export default function SuiteTableRow({ suite }: SuiteTableRowProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem asChild onSelect={() => setMenuOpen(false)}>
-              <EditSuiteDialog
-                suite={suite}
-                onSubmit={handleEditSuite}
-                isLoading={isUpdating}
-              />
+            <DropdownMenuItem
+              onSelect={() => {
+                setEditDialogOpen(true);
+                setMenuOpen(false);
+              }}
+            >
+              <Edit className="mr-2 h-4 w-4" />
+              Edit suite
             </DropdownMenuItem>
             <DropdownMenuItem onSelect={() => setMenuOpen(false)}>
               <Copy className="mr-2 h-4 w-4" />
@@ -127,7 +130,14 @@ export default function SuiteTableRow({ suite }: SuiteTableRowProps) {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        {/* Render the dialog outside the dropdown so it stays mounted */}
+        {/* Render the dialogs outside the dropdown so they stay mounted */}
+        <EditSuiteDialog
+          suite={suite}
+          onSubmit={handleEditSuite}
+          isLoading={isUpdating}
+          open={editDialogOpen}
+          setOpen={setEditDialogOpen}
+        />
         <DeleteSuiteDialog
           suite={{ id: suite.id, name: suite.name }}
           onDelete={deleteSuite}

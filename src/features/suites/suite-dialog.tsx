@@ -57,12 +57,20 @@ export function EditSuiteDialog({
   suite,
   onSubmit,
   isLoading,
+  open: controlledOpen,
+  setOpen: setControlledOpen,
 }: {
   suite: Suite;
   onSubmit: (data: SuiteFormValues) => void;
   isLoading?: boolean;
+  open?: boolean;
+  setOpen?: (open: boolean) => void;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const isOpen =
+    controlledOpen !== undefined ? controlledOpen : uncontrolledOpen;
+  const setIsOpen =
+    setControlledOpen !== undefined ? setControlledOpen : setUncontrolledOpen;
 
   // Memoize defaultValues to prevent unnecessary re-renders
   const defaultValues = React.useMemo(
