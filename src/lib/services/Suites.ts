@@ -23,20 +23,29 @@ export async function deleteSuite(suiteId: string) {
 const BUCKET = "suites";
 
 export async function createEditSuite(newSuite: SuiteFormValues, id?: string) {
-  const imageFiles: (File | string)[] = Array.isArray(newSuite.images)
-    ? newSuite.images
-    : newSuite.images instanceof FileList
-    ? Array.from(newSuite.images)
-    : [];
+  // Handle the case where images could be URLs (for existing) or Files (for new uploads)
+  let imageFiles: (File | string)[] = [];
+
+  if (Array.isArray(newSuite.images)) {
+    imageFiles = newSuite.images;
+  } else if (newSuite.images instanceof FileList) {
+    imageFiles = Array.from(newSuite.images);
+  } else if (typeof newSuite.images === "string") {
+    imageFiles = [newSuite.images];
+  } else if (newSuite.images === null || newSuite.images === undefined) {
+    imageFiles = [];
+  }
 
   const isEditing = Boolean(id);
 
   // Use the public URL prefix for your Supabase storage bucket
   const PUBLIC_URL_PREFIX = `https://${ENV.SUPABASE_URL}/storage/v1/object/public/${BUCKET}/`;
 
+  // Separate existing URLs from new file uploads
   const existingUrls = imageFiles.filter(
     (file): file is string =>
-      typeof file === "string" && file.startsWith(PUBLIC_URL_PREFIX)
+      typeof file === "string" &&
+      (file.startsWith(PUBLIC_URL_PREFIX) || file.startsWith("http"))
   );
 
   const fileUploads = imageFiles.filter((f): f is File => f instanceof File);
@@ -66,6 +75,7 @@ export async function createEditSuite(newSuite: SuiteFormValues, id?: string) {
     uploadedUrls.push(publicUrlData.publicUrl);
   }
 
+  // Combine existing URLs with newly uploaded URLs
   const finalImages = [...existingUrls, ...uploadedUrls];
 
   const suitePayload = {

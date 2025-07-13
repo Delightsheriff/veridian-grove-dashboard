@@ -89,10 +89,18 @@ export default function CreateSuiteForm({
 
   const handleInputChange = useCallback(
     (field: string, value: string | number | boolean | FileList | null) => {
-      setFormData((prev) => ({
-        ...prev,
-        [field]: value,
-      }));
+      if (field === "images") {
+        // Only allow FileList | null for images
+        setFormData((prev) => ({
+          ...prev,
+          images: value as FileList | null,
+        }));
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          [field]: value,
+        }));
+      }
 
       // Clear error when user starts typing
       setErrors((prev) => {
@@ -122,6 +130,12 @@ export default function CreateSuiteForm({
 
   const validateForm = useCallback(() => {
     try {
+      // In edit mode, if no new images are selected, use existing images
+      const imagesToValidate =
+        isEditing && !formData.images
+          ? formData.existingImages
+          : formData.images;
+
       const validatedData = suiteSchema.parse({
         name: formData.name,
         description: formData.description,
@@ -129,7 +143,7 @@ export default function CreateSuiteForm({
         regular_price: formData.regular_price,
         discount: formData.discount,
         features: formData.features,
-        images: formData.images,
+        images: imagesToValidate,
       });
       setErrors({});
       return validatedData;
@@ -144,7 +158,7 @@ export default function CreateSuiteForm({
       }
       return null;
     }
-  }, [formData]);
+  }, [formData, isEditing]);
 
   const resetForm = useCallback(() => {
     setFormData({
@@ -166,11 +180,20 @@ export default function CreateSuiteForm({
     if (!validatedData) return;
 
     try {
+      // For editing, if no new images are selected, preserve existing images
+      const finalData = {
+        ...validatedData,
+        images:
+          isEditing && !formData.images
+            ? formData.existingImages
+            : validatedData.images,
+      };
+
       if (onSubmit) {
-        await onSubmit(validatedData);
+        await onSubmit(finalData);
       } else {
         await createEditSuite({
-          suiteData: validatedData,
+          suiteData: finalData,
           id: isEditing ? defaultValues.id : undefined,
         });
         if (!isEditing) {
