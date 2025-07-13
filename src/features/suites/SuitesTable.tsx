@@ -6,7 +6,7 @@ import {
   TableHead,
   TableBody,
 } from "@/components/ui/table";
-import { BedDouble } from "lucide-react";
+import { BedDouble, Loader2 } from "lucide-react";
 import SuiteTableRow from "./SuitesTableRow";
 import { useSearchParams } from "react-router";
 import { useSuites } from "./useSuites";
@@ -19,7 +19,18 @@ export default function SuitesTable() {
   if (isPending) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p>Loading suites...</p>
+        <div className="flex flex-col items-center space-y-4">
+          <div className="relative">
+            <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            <div className="absolute inset-0 h-10 w-10 rounded-full border-2 border-muted animate-pulse"></div>
+          </div>
+          <div className="text-center space-y-1">
+            <p className="text-sm font-medium">Loading suites...</p>
+            <p className="text-xs text-muted-foreground">
+              Please wait while we fetch your data
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
