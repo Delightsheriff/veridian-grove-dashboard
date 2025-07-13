@@ -12,6 +12,7 @@ import {
 } from "@/interface/suites";
 import { useCreateEditSuite } from "./useSuites";
 import { z } from "zod";
+import { Loader2 } from "lucide-react";
 
 interface CreateSuiteFormProps {
   defaultValues?: Partial<Suite>;
@@ -191,6 +192,10 @@ export default function CreateSuiteForm({
 
       if (onSubmit) {
         await onSubmit(finalData);
+        // Call onSuccess after successful submission
+        if (onSuccess) {
+          onSuccess();
+        }
       } else {
         await createEditSuite({
           suiteData: finalData,
@@ -397,13 +402,14 @@ export default function CreateSuiteForm({
           disabled={isSubmitting || isSubmittingHook}
           className="bg-green-700 hover:bg-green-800 dark:bg-green-600 dark:hover:bg-green-700 text-white"
         >
-          {isSubmitting || isSubmittingHook
-            ? isEditing
-              ? "Updating..."
-              : "Creating..."
-            : isEditing
-            ? "Update Suite"
-            : "Create Suite"}
+          {isSubmitting || isSubmittingHook ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              {isEditing ? "Updating..." : "Creating..."}
+            </>
+          ) : (
+            <>{isEditing ? "Update Suite" : "Create Suite"}</>
+          )}
         </Button>
       </DialogFooter>
     </form>

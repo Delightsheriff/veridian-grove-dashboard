@@ -19,7 +19,16 @@ export function CreateSuiteDialog() {
   const { createEditSuite, isPending } = useCreateEditSuite();
 
   const handleSubmit = async (data: SuiteFormValues) => {
-    await createEditSuite({ suiteData: data });
+    try {
+      await createEditSuite({ suiteData: data });
+      // Only close on success - this will be handled by onSuccess callback
+    } catch (error) {
+      // Error handling is done in the hook via toast
+      console.error("Failed to create suite:", error);
+    }
+  };
+
+  const handleSuccess = () => {
     setIsOpen(false);
   };
 
@@ -46,6 +55,7 @@ export function CreateSuiteDialog() {
         <CreateSuiteForm
           onCancel={handleCancel}
           onSubmit={handleSubmit}
+          onSuccess={handleSuccess}
           isSubmitting={isPending}
         />
       </DialogContent>
@@ -98,8 +108,16 @@ export function EditSuiteDialog({
 
   const handleCancel = () => setIsOpen(false);
 
-  const handleSubmit = (data: SuiteFormValues) => {
-    onSubmit(data);
+  const handleSubmit = async (data: SuiteFormValues) => {
+    try {
+      await onSubmit(data);
+      // Only close on success - this will be handled by onSuccess callback
+    } catch (error) {
+      console.error("Failed to update suite:", error);
+    }
+  };
+
+  const handleSuccess = () => {
     setIsOpen(false);
   };
 
@@ -124,6 +142,7 @@ export function EditSuiteDialog({
           isEditing={true}
           onCancel={handleCancel}
           onSubmit={handleSubmit}
+          onSuccess={handleSuccess}
           isSubmitting={isLoading}
         />
       </DialogContent>
