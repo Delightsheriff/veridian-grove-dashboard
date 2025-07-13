@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,6 +37,13 @@ export default function SuiteTableRow({ suite }: SuiteTableRowProps) {
     createEditSuite({
       suiteData: data,
       id: suite.id,
+    });
+  };
+  const handleDuplicateSuite = () => {
+    const { id, created_at, updated_at, ...suiteDataWithoutId } = suite;
+    createEditSuite({
+      suiteData: suiteDataWithoutId,
+      // Don't pass id at all for new suite creation
     });
   };
 
@@ -114,7 +122,12 @@ export default function SuiteTableRow({ suite }: SuiteTableRowProps) {
               <Edit className="mr-2 h-4 w-4" />
               Edit suite
             </DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => setMenuOpen(false)}>
+            <DropdownMenuItem
+              onSelect={() => {
+                handleDuplicateSuite();
+                setMenuOpen(false);
+              }}
+            >
               <Copy className="mr-2 h-4 w-4" />
               Duplicate suite
             </DropdownMenuItem>
