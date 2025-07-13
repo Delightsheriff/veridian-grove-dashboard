@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -13,7 +11,7 @@ import {
   type SuiteFormValues,
 } from "@/interface/suites";
 import { useCreateEditSuite } from "./useSuites";
-import z from "zod"; // Import zod for validation
+import { z } from "zod";
 
 interface CreateSuiteFormProps {
   defaultValues?: Partial<Suite>;
@@ -47,16 +45,6 @@ const defaultFeatures = featuresList.reduce((acc, feature) => {
   return acc;
 }, {} as Record<string, boolean>);
 
-const getInitialFormData = (defaults: Partial<Suite> = {}) => ({
-  name: defaults.name || "",
-  description: defaults.description || "",
-  max_guests: String(defaults.max_guests || 1),
-  regular_price: String(defaults.regular_price || 0),
-  discount: String(defaults.discount || 0),
-  features: { ...defaultFeatures, ...(defaults.features || {}) },
-  images: null as FileList | null,
-});
-
 export default function CreateSuiteForm({
   defaultValues = {},
   isEditing = false,
@@ -67,46 +55,72 @@ export default function CreateSuiteForm({
 }: CreateSuiteFormProps) {
   const { createEditSuite, isPending: isSubmittingHook } = useCreateEditSuite();
 
-  const [formData, setFormData] = useState(() =>
-    getInitialFormData(defaultValues)
+  // Memoize initial form data to prevent unnecessary re-renders
+  const initialFormData = useMemo(
+    () => ({
+      name: defaultValues.name || "",
+      description: defaultValues.description || "",
+      max_guests: String(defaultValues.max_guests || 1),
+      regular_price: String(defaultValues.regular_price || 0),
+      discount: String(defaultValues.discount || 0),
+      features: { ...defaultFeatures, ...(defaultValues.features || {}) },
+      images: null as FileList | null,
+      existingImages: defaultValues.images || [], // Keep track of existing images
+    }),
+    [defaultValues]
   );
+
+  const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Only update form data when defaultValues actually change (e.g., dialog opens for edit)
+  // Reset form data when defaultValues change (for edit mode)
   React.useEffect(() => {
-    setFormData(getInitialFormData(defaultValues));
-  }, [defaultValues]);
+    setFormData({
+      name: defaultValues.name || "",
+      description: defaultValues.description || "",
+      max_guests: String(defaultValues.max_guests || 1),
+      regular_price: String(defaultValues.regular_price || 0),
+      discount: String(defaultValues.discount || 0),
+      features: { ...defaultFeatures, ...(defaultValues.features || {}) },
+      images: null,
+      existingImages: defaultValues.images || [],
+    });
+  }, [defaultValues.id]); // Only depend on ID to avoid infinite loops
 
-  const handleInputChange = (
-    field: string,
-    value: string | number | boolean | FileList | null
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+  const handleInputChange = useCallback(
+    (field: string, value: string | number | boolean | FileList | null) => {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
 
-    // Clear error when user starts typing
-    if (errors[field]) {
+      // Clear error when user starts typing
       setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[field];
-        return newErrors;
+        if (prev[field]) {
+          const newErrors = { ...prev };
+          delete newErrors[field];
+          return newErrors;
+        }
+        return prev;
       });
-    }
-  };
+    },
+    []
+  );
 
-  const handleFeatureChange = (featureKey: string, checked: boolean) => {
-    setFormData((prev) => ({
-      ...prev,
-      features: {
-        ...prev.features,
-        [featureKey]: checked,
-      },
-    }));
-  };
+  const handleFeatureChange = useCallback(
+    (featureKey: string, checked: boolean) => {
+      setFormData((prev) => ({
+        ...prev,
+        features: {
+          ...prev.features,
+          [featureKey]: checked,
+        },
+      }));
+    },
+    []
+  );
 
-  const validateForm = () => {
+  const validateForm = useCallback(() => {
     try {
       const validatedData = suiteSchema.parse({
         name: formData.name,
@@ -130,16 +144,24 @@ export default function CreateSuiteForm({
       }
       return null;
     }
-  };
+  }, [formData]);
 
-  const resetForm = () => {
-    setFormData(getInitialFormData());
+  const resetForm = useCallback(() => {
+    setFormData({
+      name: "",
+      description: "",
+      max_guests: "1",
+      regular_price: "0",
+      discount: "0",
+      features: { ...defaultFeatures },
+      images: null,
+      existingImages: [],
+    });
     setErrors({});
-  };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const validatedData = validateForm();
     if (!validatedData) return;
 
@@ -160,6 +182,13 @@ export default function CreateSuiteForm({
       }
     } catch (error) {
       console.error("Form submission error:", error);
+    }
+  };
+
+  const handleCancel = () => {
+    if (onCancel) onCancel();
+    if (!isEditing) {
+      resetForm();
     }
   };
 
@@ -280,6 +309,34 @@ export default function CreateSuiteForm({
           <Label htmlFor="images" className="text-sm font-medium">
             Suite Images
           </Label>
+
+          {/* Show existing images in edit mode */}
+          {isEditing &&
+            formData.existingImages &&
+            formData.existingImages.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs text-muted-foreground">
+                  Current images ({formData.existingImages.length}):
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {formData.existingImages.slice(0, 3).map((image, index) => (
+                    <div key={index} className="relative">
+                      <img
+                        src={image || "/placeholder.svg"}
+                        alt={`Suite image ${index + 1}`}
+                        className="w-16 h-16 object-cover rounded border"
+                      />
+                    </div>
+                  ))}
+                  {formData.existingImages.length > 3 && (
+                    <div className="w-16 h-16 bg-muted rounded border flex items-center justify-center text-xs">
+                      +{formData.existingImages.length - 3}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
           <div className="space-y-2">
             <Input
               id="images"
@@ -291,7 +348,9 @@ export default function CreateSuiteForm({
               className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 cursor-pointer"
             />
             <p className="text-xs text-muted-foreground px-1">
-              Select multiple images for the suite gallery (JPG, PNG, WebP)
+              {isEditing
+                ? "Select new images to replace existing ones (JPG, PNG, WebP)"
+                : "Select multiple images for the suite gallery (JPG, PNG, WebP)"}
             </p>
           </div>
           {errors.images && (
@@ -305,13 +364,7 @@ export default function CreateSuiteForm({
         <Button
           variant="outline"
           type="button"
-          onClick={() => {
-            if (onCancel) onCancel();
-            // Reset form if not editing
-            if (!isEditing) {
-              resetForm();
-            }
-          }}
+          onClick={handleCancel}
           disabled={isSubmitting || isSubmittingHook}
         >
           Cancel

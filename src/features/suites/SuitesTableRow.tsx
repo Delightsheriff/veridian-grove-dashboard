@@ -1,5 +1,3 @@
-"use client";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -114,7 +112,8 @@ export default function SuiteTableRow({ suite }: SuiteTableRowProps) {
               />
             </DropdownMenuItem>
             <DropdownMenuItem onSelect={() => setMenuOpen(false)}>
-              <Copy className="mr-2 h-4 w-4" />+ Duplicate suite
+              <Copy className="mr-2 h-4 w-4" />
+              Duplicate suite
             </DropdownMenuItem>
             <DropdownMenuItem
               className="text-red-600 dark:text-red-400"

@@ -26,6 +26,7 @@ export function CreateSuiteDialog() {
   const handleCancel = () => {
     setIsOpen(false);
   };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -66,17 +67,29 @@ export function EditSuiteDialog({
   // Memoize defaultValues to prevent unnecessary re-renders
   const defaultValues = React.useMemo(
     () => ({
+      id: suite.id,
       name: suite.name,
       description: suite.description,
       max_guests: suite.max_guests,
       regular_price: suite.regular_price,
       discount: suite.discount,
       features: suite.features,
+      images: suite.images, // Preserve existing images
     }),
-    [suite]
+    [
+      suite.id,
+      suite.name,
+      suite.description,
+      suite.max_guests,
+      suite.regular_price,
+      suite.discount,
+      suite.features,
+      suite.images,
+    ]
   );
 
   const handleCancel = () => setIsOpen(false);
+
   const handleSubmit = (data: SuiteFormValues) => {
     onSubmit(data);
     setIsOpen(false);
@@ -85,8 +98,8 @@ export function EditSuiteDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm">
-          <Edit className="mr-2 h-4 w-4" />
+        <Button variant="ghost" size="sm" className="font-normal">
+          <Edit className="mr-2 h-4 w-4 font-normal" />
           Edit suite
         </Button>
       </DialogTrigger>
