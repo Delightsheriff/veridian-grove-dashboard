@@ -1,8 +1,6 @@
 "use client";
 
-import type React from "react";
-
-import { useState, useEffect, useMemo } from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -49,6 +47,16 @@ const defaultFeatures = featuresList.reduce((acc, feature) => {
   return acc;
 }, {} as Record<string, boolean>);
 
+const getInitialFormData = (defaults: Partial<Suite> = {}) => ({
+  name: defaults.name || "",
+  description: defaults.description || "",
+  max_guests: String(defaults.max_guests || 1),
+  regular_price: String(defaults.regular_price || 0),
+  discount: String(defaults.discount || 0),
+  features: { ...defaultFeatures, ...(defaults.features || {}) },
+  images: null as FileList | null,
+});
+
 export default function CreateSuiteForm({
   defaultValues = {},
   isEditing = false,
@@ -59,48 +67,15 @@ export default function CreateSuiteForm({
 }: CreateSuiteFormProps) {
   const { createEditSuite, isPending: isSubmittingHook } = useCreateEditSuite();
 
-  // Memoize defaultFeatures to prevent unnecessary re-renders
-  const memoizedDefaultFeatures = useMemo(() => defaultFeatures, []);
-
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    max_guests: "1",
-    regular_price: "0",
-    discount: "0",
-    features: memoizedDefaultFeatures,
-    images: null as FileList | null,
-  });
-
+  const [formData, setFormData] = useState(() =>
+    getInitialFormData(defaultValues)
+  );
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Update form data when defaultValues change (for editing)
-  useEffect(() => {
-    if (defaultValues && Object.keys(defaultValues).length > 0) {
-      setFormData({
-        name: defaultValues.name || "",
-        description: defaultValues.description || "",
-        max_guests: String(defaultValues.max_guests || 1),
-        regular_price: String(defaultValues.regular_price || 0),
-        discount: String(defaultValues.discount || 0),
-        features: {
-          ...memoizedDefaultFeatures,
-          ...defaultValues.features,
-        },
-        images: null,
-      });
-    } else {
-      setFormData({
-        name: "",
-        description: "",
-        max_guests: "1",
-        regular_price: "0",
-        discount: "0",
-        features: memoizedDefaultFeatures,
-        images: null,
-      });
-    }
-  }, [defaultValues, memoizedDefaultFeatures]);
+  // Only update form data when defaultValues actually change (e.g., dialog opens for edit)
+  React.useEffect(() => {
+    setFormData(getInitialFormData(defaultValues));
+  }, [defaultValues]);
 
   const handleInputChange = (
     field: string,
@@ -158,15 +133,7 @@ export default function CreateSuiteForm({
   };
 
   const resetForm = () => {
-    setFormData({
-      name: "",
-      description: "",
-      max_guests: "1",
-      regular_price: "0",
-      discount: "0",
-      features: memoizedDefaultFeatures,
-      images: null,
-    });
+    setFormData(getInitialFormData());
     setErrors({});
   };
 
@@ -177,22 +144,16 @@ export default function CreateSuiteForm({
     if (!validatedData) return;
 
     try {
-      // If onSubmit is provided (for editing), use it; otherwise use the hook directly
       if (onSubmit) {
         await onSubmit(validatedData);
       } else {
-        // For creating new suites
         await createEditSuite({
           suiteData: validatedData,
           id: isEditing ? defaultValues.id : undefined,
         });
-
-        // Reset form after successful creation
         if (!isEditing) {
           resetForm();
         }
-
-        // Call onSuccess if provided
         if (onSuccess) {
           onSuccess();
         }

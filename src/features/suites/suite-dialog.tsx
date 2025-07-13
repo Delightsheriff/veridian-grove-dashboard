@@ -12,13 +12,14 @@ import CreateSuiteForm from "./CreateSuiteForm";
 import { useState } from "react";
 import type { Suite, SuiteFormValues } from "@/interface/suites";
 import React from "react";
+import { useCreateEditSuite } from "./useSuites";
 
 export function CreateSuiteDialog() {
   const [isOpen, setIsOpen] = useState(false);
+  const { createEditSuite, isPending } = useCreateEditSuite();
 
-  const handleSubmit = (data: SuiteFormValues) => {
-    console.log("Form submitted:", data);
-    // Handle form submission here
+  const handleSubmit = async (data: SuiteFormValues) => {
+    await createEditSuite({ suiteData: data });
     setIsOpen(false);
   };
 
@@ -41,7 +42,11 @@ export function CreateSuiteDialog() {
             started.
           </DialogDescription>
         </DialogHeader>
-        <CreateSuiteForm onCancel={handleCancel} onSubmit={handleSubmit} />
+        <CreateSuiteForm
+          onCancel={handleCancel}
+          onSubmit={handleSubmit}
+          isSubmitting={isPending}
+        />
       </DialogContent>
     </Dialog>
   );

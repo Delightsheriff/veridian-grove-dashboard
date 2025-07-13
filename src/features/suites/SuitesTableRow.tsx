@@ -31,6 +31,7 @@ export default function SuiteTableRow({ suite }: SuiteTableRowProps) {
   const { deleteSuite } = useDeleteSuite();
   const { createEditSuite, isPending: isUpdating } = useCreateEditSuite();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleEditSuite = (data: SuiteFormValues) => {
     createEditSuite({
@@ -97,7 +98,7 @@ export default function SuiteTableRow({ suite }: SuiteTableRowProps) {
       </TableCell>
       {/* Actions Cell */}
       <TableCell className="min-w-0 p-2 w-8 max-w-[48px] overflow-hidden">
-        <DropdownMenu>
+        <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
               <span className="sr-only">Open menu</span>
@@ -105,20 +106,22 @@ export default function SuiteTableRow({ suite }: SuiteTableRowProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild onSelect={() => setMenuOpen(false)}>
               <EditSuiteDialog
                 suite={suite}
                 onSubmit={handleEditSuite}
                 isLoading={isUpdating}
               />
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Copy className="mr-2 h-4 w-4" />
-              Duplicate suite
+            <DropdownMenuItem onSelect={() => setMenuOpen(false)}>
+              <Copy className="mr-2 h-4 w-4" />+ Duplicate suite
             </DropdownMenuItem>
             <DropdownMenuItem
               className="text-red-600 dark:text-red-400"
-              onSelect={() => setDeleteDialogOpen(true)}
+              onSelect={() => {
+                setDeleteDialogOpen(true);
+                setMenuOpen(false);
+              }}
             >
               <Trash2 className="mr-2 h-4 w-4" />
               Delete suite
