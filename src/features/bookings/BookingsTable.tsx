@@ -12,6 +12,7 @@ import {
 import { Calendar } from "lucide-react";
 import { bookingsData } from "./bookings-data";
 import BookingRow from "./BookingsRow";
+import Pagination from "@/components/ui/pagination";
 
 export default function BookingsTable() {
   return (
@@ -36,7 +37,9 @@ export default function BookingsTable() {
             </TableBody>
             <TableFooter>
               <TableRow>
-                <TableCell colSpan={6}>{/* <Pagination /> */}</TableCell>
+                <TableCell colSpan={6}>
+                  <Pagination count={bookingsData.length} />
+                </TableCell>
               </TableRow>
             </TableFooter>
           </Table>
