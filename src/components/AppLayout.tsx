@@ -11,11 +11,11 @@ export default function AppLayout() {
       </aside>
 
       {/* Main Area */}
-      <div className="flex flex-col bg-muted/40">
+      <div className="flex flex-col bg-muted/40 min-h-0">
         <Header />
 
         {/* Main Content Area */}
-        <main className="flex-1 p-4 lg:p-8">
+        <main className="flex-1 p-4 lg:p-8 overflow-auto">
           <Outlet />
         </main>
       </div>
