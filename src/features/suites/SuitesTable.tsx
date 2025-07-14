@@ -10,6 +10,7 @@ import { BedDouble, Loader2 } from "lucide-react";
 import SuiteTableRow from "./SuitesTableRow";
 import { useSearchParams } from "react-router";
 import { useSuites } from "./useSuites";
+import { Card } from "@/components/ui/card";
 
 export default function SuitesTable() {
   const { isPending, suites } = useSuites();
@@ -76,7 +77,8 @@ export default function SuitesTable() {
   return (
     <>
       {sortedSuites.length > 0 ? (
-        <div className="rounded-md border overflow-x-auto w-full">
+        <Card>
+          {/* <div className="rounded-md border overflow-x-auto w-full"> */}
           <Table className="min-w-full">
             <TableHeader>
               <TableRow>
@@ -97,7 +99,9 @@ export default function SuitesTable() {
               ))}
             </TableBody>
           </Table>
-        </div>
+
+          {/* </div> */}
+        </Card>
       ) : (
         <div className="rounded-md border">
           <EmptyResource

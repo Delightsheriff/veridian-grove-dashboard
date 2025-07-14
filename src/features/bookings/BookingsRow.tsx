@@ -11,13 +11,14 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { MoreHorizontal, Eye, LogIn, LogOut } from "lucide-react";
 import { DeleteBookingDialog } from "./delete-booking-dialog";
 import type { Bookings } from "@/interface/bookings";
-// import { DeleteBookingDialog } from "./delete-booking-dialog";
+import { useState } from "react";
 
 interface BookingRowProps {
   booking: Bookings;
 }
 
 export default function BookingRow({ booking }: BookingRowProps) {
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -62,42 +63,54 @@ export default function BookingRow({ booking }: BookingRowProps) {
   };
 
   return (
-    <TableRow>
+    <TableRow className="min-w-0">
       {/* Suite Cell */}
-      <TableCell>
-        <div className="font-bold text-primary">{booking.suiteName}</div>
+      <TableCell className="min-w-0 p-2 max-w-[200px] overflow-hidden">
+        <div className="font-bold text-primary truncate max-w-[120px] sm:max-w-[160px] md:max-w-[180px] lg:max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
+          {booking.suiteName}
+        </div>
       </TableCell>
 
       {/* Guest Cell */}
-      <TableCell>
-        <div className="flex flex-col">
-          <div className="font-bold">{booking.guest.name}</div>
-          <div className="text-sm text-muted-foreground">
+      <TableCell className="min-w-0 p-2 max-w-[250px] overflow-hidden">
+        <div className="flex flex-col min-w-0">
+          <div className="font-bold truncate max-w-[140px] sm:max-w-[180px] md:max-w-[220px] lg:max-w-[250px] overflow-hidden text-ellipsis whitespace-nowrap">
+            {booking.guest.name}
+          </div>
+          <div className="text-sm text-muted-foreground truncate max-w-[140px] sm:max-w-[180px] md:max-w-[220px] lg:max-w-[250px] overflow-hidden text-ellipsis whitespace-nowrap">
             {booking.guest.email}
           </div>
         </div>
       </TableCell>
 
-      {/* Dates Cell */}
-      <TableCell>
-        <div className="flex flex-col">
-          <span>In 3 days → {booking.nights} night stay</span>
-          <span className="text-sm text-muted-foreground">
+      {/* Dates Cell - Hidden on small screens */}
+      <TableCell className="hidden md:table-cell min-w-0 p-2 max-w-[200px] overflow-hidden">
+        <div className="flex flex-col min-w-0">
+          <span className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
+            In 3 days → {booking.nights} night stay
+          </span>
+          <span className="text-sm text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
             {formatDate(booking.startDate)} — {formatDate(booking.endDate)}
           </span>
         </div>
       </TableCell>
 
-      {/* Status Cell */}
-      <TableCell>{getStatusBadge(booking.status)}</TableCell>
+      {/* Status Cell - Hidden on small screens */}
+      <TableCell className="hidden lg:table-cell min-w-0 p-2 max-w-[120px] overflow-hidden">
+        <div className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
+          {getStatusBadge(booking.status)}
+        </div>
+      </TableCell>
 
       {/* Amount Cell */}
-      <TableCell>
-        <div className="font-bold">{formatCurrency(booking.totalAmount)}</div>
+      <TableCell className="min-w-0 p-2 max-w-[120px] overflow-hidden">
+        <div className="font-bold whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
+          {formatCurrency(booking.totalAmount)}
+        </div>
       </TableCell>
 
       {/* Actions Cell */}
-      <TableCell className="w-[80px]">
+      <TableCell className="min-w-0 p-2 w-8 max-w-[48px] overflow-hidden">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
@@ -110,20 +123,36 @@ export default function BookingRow({ booking }: BookingRowProps) {
               <Eye className="mr-2 h-4 w-4" />
               See details
             </DropdownMenuItem>
-            {/* Conditional: Show only if status is unconfirmed */}
-            <DropdownMenuItem>
-              <LogIn className="mr-2 h-4 w-4" />
-              Check in
-            </DropdownMenuItem>
-            {/* Conditional: Show only if status is checked-in */}
-            <DropdownMenuItem>
-              <LogOut className="mr-2 h-4 w-4" />
-              Check out
-            </DropdownMenuItem>
+            {/* Show Check in only if status is unconfirmed */}
+            {booking.status === "unconfirmed" && (
+              <DropdownMenuItem>
+                <LogIn className="mr-2 h-4 w-4" />
+                Check in
+              </DropdownMenuItem>
+            )}
+            {/* Show Check out only if status is checked-in */}
+            {booking.status === "checked-in" && (
+              <DropdownMenuItem>
+                <LogOut className="mr-2 h-4 w-4" />
+                Check out
+              </DropdownMenuItem>
+            )}
             <DropdownMenuSeparator />
-            <DeleteBookingDialog booking={booking} onDelete={handleDelete} />
+            <DropdownMenuItem
+              className="text-destructive"
+              onSelect={() => setDeleteDialogOpen(true)}
+            >
+              Delete booking
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <DeleteBookingDialog
+          booking={booking}
+          onDelete={handleDelete}
+          open={deleteDialogOpen}
+          setOpen={setDeleteDialogOpen}
+        />
       </TableCell>
     </TableRow>
   );
