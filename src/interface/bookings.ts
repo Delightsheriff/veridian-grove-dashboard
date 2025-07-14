@@ -1,13 +1,16 @@
 export interface Bookings {
   id: string;
-  suiteName: string;
+  suites: {
+    name: string;
+  };
   guest: {
     name: string;
     email: string;
   };
-  startDate: string;
-  endDate: string;
+  start_date: string;
+  end_date: string;
   nights: number;
   status: "unconfirmed" | "checked-in" | "checked-out";
-  totalAmount: number;
+  total_amount: number;
+  created_at: string;
 }

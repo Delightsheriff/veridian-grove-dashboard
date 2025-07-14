@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button";
+import { ENV } from "@/lib/constants";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useSearchParams } from "react-router";
-
-const PAGE_SIZE = 10; // You can move this to a constants file
 
 interface PaginationProps {
   count: number;
@@ -17,7 +16,7 @@ export default function Pagination({ count }: PaginationProps) {
     : Number(searchParams.get("page"));
 
   // Calculating the number of pages
-  const pageCount = Math.ceil(count / PAGE_SIZE);
+  const pageCount = Math.ceil(count / ENV.PAGE_SIZE);
 
   // Function to go to the next page
   function nextPage() {
@@ -36,8 +35,9 @@ export default function Pagination({ count }: PaginationProps) {
   // Don't render if there's only one page or less
   if (pageCount <= 1) return null;
 
-  const startResult = (currentPage - 1) * PAGE_SIZE + 1;
-  const endResult = currentPage === pageCount ? count : currentPage * PAGE_SIZE;
+  const startResult = (currentPage - 1) * ENV.PAGE_SIZE + 1;
+  const endResult =
+    currentPage === pageCount ? count : currentPage * ENV.PAGE_SIZE;
 
   return (
     <div className="flex items-center justify-between w-full">

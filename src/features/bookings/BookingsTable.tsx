@@ -9,15 +9,35 @@ import {
   TableRow,
   TableCell,
 } from "@/components/ui/table";
-import { Calendar } from "lucide-react";
-import { bookingsData } from "./bookings-data";
-import BookingRow from "./BookingsRow";
+import { Calendar, Loader2 } from "lucide-react";
 import Pagination from "@/components/ui/pagination";
+import { useBookings } from "./useBookings";
+import BookingRow from "./BookingsRow";
 
 export default function BookingsTable() {
+  const { isPending, bookings, count } = useBookings();
+
+  if (isPending) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="relative">
+            <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            <div className="absolute inset-0 h-10 w-10 rounded-full border-2 border-muted animate-pulse"></div>
+          </div>
+          <div className="text-center space-y-1">
+            <p className="text-sm font-medium">Loading Bookings...</p>
+            <p className="text-xs text-muted-foreground">
+              Please wait while we fetch your data
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <>
-      {bookingsData.length > 0 ? (
+      {bookings?.length > 0 ? (
         <Card>
           <Table>
             <TableHeader>
@@ -31,14 +51,14 @@ export default function BookingsTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {bookingsData.map((booking) => (
+              {bookings.map((booking) => (
                 <BookingRow key={booking.id} booking={booking} />
               ))}
             </TableBody>
             <TableFooter>
               <TableRow>
                 <TableCell colSpan={6}>
-                  <Pagination count={bookingsData.length} />
+                  <Pagination count={count} />
                 </TableCell>
               </TableRow>
             </TableFooter>

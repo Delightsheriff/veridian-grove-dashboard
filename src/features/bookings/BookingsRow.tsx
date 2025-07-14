@@ -67,7 +67,7 @@ export default function BookingRow({ booking }: BookingRowProps) {
       {/* Suite Cell */}
       <TableCell className="min-w-0 p-2 max-w-[200px] overflow-hidden">
         <div className="font-bold text-primary truncate max-w-[120px] sm:max-w-[160px] md:max-w-[180px] lg:max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
-          {booking.suiteName}
+          {booking.suites.name}
         </div>
       </TableCell>
 
@@ -90,7 +90,7 @@ export default function BookingRow({ booking }: BookingRowProps) {
             In 3 days → {booking.nights} night stay
           </span>
           <span className="text-sm text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
-            {formatDate(booking.startDate)} — {formatDate(booking.endDate)}
+            {formatDate(booking.start_date)} — {formatDate(booking.end_date)}
           </span>
         </div>
       </TableCell>
@@ -105,7 +105,7 @@ export default function BookingRow({ booking }: BookingRowProps) {
       {/* Amount Cell */}
       <TableCell className="min-w-0 p-2 max-w-[120px] overflow-hidden">
         <div className="font-bold whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
-          {formatCurrency(booking.totalAmount)}
+          {formatCurrency(booking.total_amount)}
         </div>
       </TableCell>
 
