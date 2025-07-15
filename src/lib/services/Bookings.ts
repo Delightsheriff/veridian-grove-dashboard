@@ -1,3 +1,4 @@
+import type { Bookings } from "@/interface/bookings";
 import supabase from "./supabase";
 
 export interface BookingsQueryParams {
@@ -75,4 +76,30 @@ export async function getBookings(params: BookingsQueryParams = {}) {
     totalPages: Math.ceil((count || 0) / pageSize),
     currentPage: page,
   };
+}
+
+export async function deleteBooking(id: number) {
+  // REMEMBER RLS POLICIES
+  const { data, error } = await supabase.from("bookings").delete().eq("id", id);
+
+  if (error) {
+    console.error(error);
+    throw new Error("Booking could not be deleted");
+  }
+  return data;
+}
+
+export async function updateBooking(id: number, obj: Partial<Bookings>) {
+  const { data, error } = await supabase
+    .from("bookings")
+    .update(obj)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error(error);
+    throw new Error("Booking could not be updated");
+  }
+  return data;
 }
