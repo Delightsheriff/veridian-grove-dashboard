@@ -1,7 +1,12 @@
 import { ENV } from "@/lib/constants";
-import { getBookings, type BookingsQueryParams } from "@/lib/services/Bookings";
-import { useQuery } from "@tanstack/react-query";
+import {
+  deleteBookingApi,
+  getBookings,
+  type BookingsQueryParams,
+} from "@/lib/services/Bookings";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "react-router";
+import { toast } from "sonner";
 export function useBookings() {
   const [searchParams] = useSearchParams();
 
@@ -36,5 +41,23 @@ export function useBookings() {
     isPending,
     error,
     isError,
+  };
+}
+
+export function useDeleteBooking() {
+  const queryClient = useQueryClient();
+  const { isPending: isDeleting, mutate: deleteBooking } = useMutation({
+    mutationFn: (id: number) => deleteBookingApi(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["bookings"] });
+    },
+    onError: (error) => {
+      console.error("Error deleting booking:", error);
+      toast.error("Booking could not be deleted");
+    },
+  });
+  return {
+    isDeleting,
+    deleteBooking,
   };
 }
