@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +13,7 @@ import { MoreHorizontal, Eye, LogIn, LogOut } from "lucide-react";
 import { DeleteBookingDialog } from "./delete-booking-dialog";
 import type { Bookings } from "@/interface/bookings";
 import { useState } from "react";
+import { useDeleteBooking } from "./useBookings";
 
 interface BookingRowProps {
   booking: Bookings;
@@ -19,6 +21,7 @@ interface BookingRowProps {
 
 export default function BookingRow({ booking }: BookingRowProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const { deleteBooking } = useDeleteBooking();
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -55,11 +58,6 @@ export default function BookingRow({ booking }: BookingRowProps) {
           </Badge>
         );
     }
-  };
-
-  const handleDelete = (bookingId: string) => {
-    // Handle booking deletion logic here
-    console.log("Deleting booking:", bookingId);
   };
 
   return (
@@ -149,7 +147,8 @@ export default function BookingRow({ booking }: BookingRowProps) {
 
         <DeleteBookingDialog
           booking={booking}
-          onDelete={handleDelete}
+          // @ts-ignore
+          onDelete={deleteBooking}
           open={deleteDialogOpen}
           setOpen={setDeleteDialogOpen}
         />

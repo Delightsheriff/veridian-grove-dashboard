@@ -49,6 +49,7 @@ export function useDeleteBooking() {
   const { isPending: isDeleting, mutate: deleteBooking } = useMutation({
     mutationFn: (id: number) => deleteBookingApi(id),
     onSuccess: () => {
+      toast.success("Booking deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
     },
     onError: (error) => {
