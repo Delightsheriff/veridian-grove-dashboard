@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Badge } from "@/components/ui/badge";
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,6 +14,7 @@ import { DeleteBookingDialog } from "./delete-booking-dialog";
 import type { Bookings } from "@/interface/bookings";
 import { useState } from "react";
 import { useDeleteBooking } from "./useBookings";
+import { formatCurrency, formatDate, getStatusBadge } from "@/lib/helpers";
 
 interface BookingRowProps {
   booking: Bookings;
@@ -22,43 +23,6 @@ interface BookingRowProps {
 export default function BookingRow({ booking }: BookingRowProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { deleteBooking } = useDeleteBooking();
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
-
-  const getStatusBadge = (status: Bookings["status"]) => {
-    switch (status) {
-      case "unconfirmed":
-        return (
-          <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 border-blue-200 dark:border-blue-800">
-            Unconfirmed
-          </Badge>
-        );
-      case "checked-in":
-        return (
-          <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 border-green-200 dark:border-green-800">
-            Checked In
-          </Badge>
-        );
-      case "checked-out":
-        return (
-          <Badge className="bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-700">
-            Checked Out
-          </Badge>
-        );
-    }
-  };
 
   return (
     <TableRow className="min-w-0">

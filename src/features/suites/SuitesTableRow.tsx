@@ -14,19 +14,13 @@ import { EditSuiteDialog } from "./suite-dialog";
 import { DeleteSuiteDialog } from "./delete-suite-dialog";
 import { useCreateEditSuite, useDeleteSuite } from "./useSuites";
 import { useState } from "react";
+import { formatCurrency } from "@/lib/helpers";
 
 interface SuiteTableRowProps {
   suite: Suite;
 }
 
 export default function SuiteTableRow({ suite }: SuiteTableRowProps) {
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  };
-
   const { deleteSuite } = useDeleteSuite();
   const { createEditSuite, isPending: isUpdating } = useCreateEditSuite();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
