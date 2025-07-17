@@ -8,6 +8,8 @@ import { Toaster } from "sonner";
 import AppLayout from "./components/AppLayout";
 import Suites from "./pages/Suites";
 import Bookings from "./pages/Bookings";
+import BookingDetails from "./features/bookings/BookingDetails";
+import CheckinPage from "./features/checkin/CheckinPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,9 +33,9 @@ function App() {
                 <Route path="/suites" element={<Suites />} />
                 <Route
                   path="bookings/:bookingId"
-                  element={<>Booking Details</>}
+                  element={<BookingDetails />}
                 />
-                <Route path="checkin/:bookingId" element={<>Check-in</>} />
+                <Route path="checkin/:bookingId" element={<CheckinPage />} />
                 <Route path="/users" element={<div>Users Page</div>} />
                 <Route path="/settings" element={<div>Settings Page</div>} />
                 <Route path="/account" element={<div>Account Page</div>} />

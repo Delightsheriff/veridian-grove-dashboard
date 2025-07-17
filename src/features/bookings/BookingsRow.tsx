@@ -15,6 +15,7 @@ import type { Bookings } from "@/interface/bookings";
 import { useState } from "react";
 import { useDeleteBooking } from "./useBookings";
 import { formatCurrency, formatDate, getStatusBadge } from "@/lib/helpers";
+import { useNavigate } from "react-router";
 
 interface BookingRowProps {
   booking: Bookings;
@@ -23,6 +24,7 @@ interface BookingRowProps {
 export default function BookingRow({ booking }: BookingRowProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { deleteBooking } = useDeleteBooking();
+  const navigate = useNavigate();
 
   return (
     <TableRow className="min-w-0">
@@ -81,13 +83,21 @@ export default function BookingRow({ booking }: BookingRowProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onSelect={() => {
+                navigate(`/bookings/${booking.id}`);
+              }}
+            >
               <Eye className="mr-2 h-4 w-4" />
               See details
             </DropdownMenuItem>
             {/* Show Check in only if status is unconfirmed */}
             {booking.status === "unconfirmed" && (
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={() => {
+                  navigate(`/checkin/${booking.id}`);
+                }}
+              >
                 <LogIn className="mr-2 h-4 w-4" />
                 Check in
               </DropdownMenuItem>

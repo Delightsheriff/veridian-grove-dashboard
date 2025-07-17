@@ -12,6 +12,7 @@ export interface BookingsQueryParams {
     | "amount-low-high";
 }
 
+// Fetch bookings
 export async function getBookings(params: BookingsQueryParams = {}) {
   const {
     page = 1,
@@ -78,6 +79,7 @@ export async function getBookings(params: BookingsQueryParams = {}) {
   };
 }
 
+// Delete booking
 export async function deleteBookingApi(id: number) {
   // REMEMBER RLS POLICIES
   const { data, error } = await supabase.from("bookings").delete().eq("id", id);
@@ -89,6 +91,7 @@ export async function deleteBookingApi(id: number) {
   return data;
 }
 
+// Update booking
 export async function updateBooking(id: number, obj: Partial<Bookings>) {
   const { data, error } = await supabase
     .from("bookings")
