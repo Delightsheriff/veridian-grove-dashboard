@@ -92,7 +92,7 @@ export async function deleteBookingApi(id: number) {
 }
 
 // Update booking
-export async function updateBooking(id: number, obj: Partial<Bookings>) {
+export async function updateBooking(id: string, obj: Partial<Bookings>) {
   const { data, error } = await supabase
     .from("bookings")
     .update(obj)
