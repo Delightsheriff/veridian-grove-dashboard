@@ -9,8 +9,10 @@ import AppLayout from "./components/AppLayout";
 import Suites from "./pages/Suites";
 import Bookings from "./pages/Bookings";
 import BookingDetails from "./features/bookings/BookingDetails";
-import CheckinPage from "./features/checkin/CheckinPage";
 import Account from "./pages/Account";
+import Settings from "./pages/Settings";
+import User from "./pages/User";
+import Checkin from "./pages/Checkin";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,9 +38,9 @@ function App() {
                   path="bookings/:bookingId"
                   element={<BookingDetails />}
                 />
-                <Route path="checkin/:bookingId" element={<CheckinPage />} />
-                <Route path="/users" element={<div>Users Page</div>} />
-                <Route path="/settings" element={<div>Settings Page</div>} />
+                <Route path="checkin/:bookingId" element={<Checkin />} />
+                <Route path="/users" element={<User />} />
+                <Route path="/settings" element={<Settings />} />
                 <Route path="/account" element={<Account />} />
               </Route>
               <Route path="/login" element={<Login />} />
