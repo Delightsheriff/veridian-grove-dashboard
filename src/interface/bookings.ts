@@ -1,17 +1,20 @@
 export interface Bookings {
   id: string;
-  suiteName: string;
+  suite: {
+    name: string;
+    id: string;
+  };
   guest: {
     name: string;
     email: string;
   };
-  startDate: string;
-  endDate: string;
+  start_date: string;
+  end_date: string;
   nights: number;
   status: "unconfirmed" | "checked-in" | "checked-out";
-  totalAmount: number;
-  extrasPrice?: number;
-  hasBreakfast?: boolean;
+  total_amount: number;
+  extras_price?: number;
+  has_breakfast?: boolean;
   observations?: string;
-  isPaid?: boolean;
+  is_paid?: boolean;
 }

@@ -16,6 +16,7 @@ import { useState } from "react";
 import { useDeleteBooking } from "./useBookings";
 import { formatCurrency, formatDate, getStatusBadge } from "@/lib/helpers";
 import { useNavigate } from "react-router";
+import { useCheckout } from "../checkin/useCheckin";
 
 interface BookingRowProps {
   booking: Bookings;
@@ -24,6 +25,7 @@ interface BookingRowProps {
 export default function BookingRow({ booking }: BookingRowProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { deleteBooking } = useDeleteBooking();
+  const { checkout } = useCheckout();
   const navigate = useNavigate();
 
   return (
@@ -31,7 +33,7 @@ export default function BookingRow({ booking }: BookingRowProps) {
       {/* Suite Cell */}
       <TableCell className="min-w-0 p-2 max-w-[200px] overflow-hidden">
         <div className="font-bold text-primary truncate max-w-[120px] sm:max-w-[160px] md:max-w-[180px] lg:max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
-          {booking.suites.name}
+          {booking.suite?.name}
         </div>
       </TableCell>
 
@@ -104,7 +106,11 @@ export default function BookingRow({ booking }: BookingRowProps) {
             )}
             {/* Show Check out only if status is checked-in */}
             {booking.status === "checked-in" && (
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={() => {
+                  checkout(booking.id);
+                }}
+              >
                 <LogOut className="mr-2 h-4 w-4" />
                 Check out
               </DropdownMenuItem>
