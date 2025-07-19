@@ -13,6 +13,7 @@ import Account from "./pages/Account";
 import Settings from "./pages/Settings";
 import User from "./pages/User";
 import Checkin from "./pages/Checkin";
+import Dashboard from "./pages/Dashboard";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,7 +32,7 @@ function App() {
           <BrowserRouter>
             <Routes>
               <Route element={<AppLayout />}>
-                <Route index element={<div>Home Page</div>} />
+                <Route index element={<Dashboard />} />
                 <Route path="/bookings" element={<Bookings />} />
                 <Route path="/suites" element={<Suites />} />
                 <Route
