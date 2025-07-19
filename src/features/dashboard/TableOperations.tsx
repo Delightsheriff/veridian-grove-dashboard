@@ -10,11 +10,11 @@ import { useSearchParams } from "react-router";
 export default function TableOperations() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const currentFilter = searchParams.get("days") || "30";
+  const currentFilter = searchParams.get("last") || "30";
 
   const handleFilterChange = (value: string) => {
     const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set("days", value);
+    newSearchParams.set("last", value);
     setSearchParams(newSearchParams);
   };
 

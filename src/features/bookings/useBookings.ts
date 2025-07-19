@@ -2,11 +2,14 @@ import { ENV } from "@/lib/constants";
 import {
   deleteBookingApi,
   getBookings,
+  getBookingsAfterDate,
   type BookingsQueryParams,
 } from "@/lib/services/Bookings";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "react-router";
 import { toast } from "sonner";
+import { subDays } from "date-fns";
+
 export function useBookings() {
   const [searchParams] = useSearchParams();
 
@@ -61,4 +64,22 @@ export function useDeleteBooking() {
     isDeleting,
     deleteBooking,
   };
+}
+
+// This hook fetches recent bookings based on the number of days specified in the URL search parameters.
+export function useRecentBookings() {
+  const [searchParams] = useSearchParams();
+
+  const numDays = !searchParams.get("last")
+    ? 7
+    : Number(searchParams.get("last"));
+
+  const queryDate = subDays(new Date(), numDays).toISOString();
+
+  const { isLoading, data: bookings } = useQuery({
+    queryFn: () => getBookingsAfterDate(queryDate),
+    queryKey: ["bookings", `last-${numDays}`],
+  });
+
+  return { isLoading, bookings };
 }
