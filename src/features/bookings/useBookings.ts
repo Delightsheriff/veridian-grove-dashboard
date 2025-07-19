@@ -3,6 +3,8 @@ import {
   deleteBookingApi,
   getBookings,
   getBookingsAfterDate,
+  getStaysAfterDate,
+  getStaysTodayActivity,
   type BookingsQueryParams,
 } from "@/lib/services/Bookings";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -82,4 +84,36 @@ export function useRecentBookings() {
   });
 
   return { isLoading, bookings };
+}
+
+// This hook fetches recent stays based on the number of days specified in the URL search parameters.
+export function useRecentStays() {
+  const [searchParams] = useSearchParams();
+
+  const numDays = !searchParams.get("last")
+    ? 7
+    : Number(searchParams.get("last"));
+
+  const queryDate = subDays(new Date(), numDays).toISOString();
+
+  const { isLoading, data: stays } = useQuery({
+    queryFn: () => getStaysAfterDate(queryDate),
+    queryKey: ["stays", `last-${numDays}`],
+  });
+
+  const confirmedStays = stays?.filter(
+    (stay) => stay.status === "checked-in" || stay.status === "checked-out"
+  );
+
+  return { isLoading, stays, confirmedStays, numDays };
+}
+
+// This hook fetches today's activity for stays, which includes both checked-in and checked-out stays.
+export function useTodayActivity() {
+  const { isLoading, data: activities } = useQuery({
+    queryFn: getStaysTodayActivity,
+    queryKey: ["today-activity"],
+  });
+
+  return { isLoading, activities };
 }
