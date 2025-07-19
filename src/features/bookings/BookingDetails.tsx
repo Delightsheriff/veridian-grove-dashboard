@@ -36,7 +36,7 @@ const mockBooking = {
 
 export default function BookingDetails() {
   return (
-    <div className="space-y-6">
+    <>
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -147,6 +147,6 @@ export default function BookingDetails() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </>
   );
 }
