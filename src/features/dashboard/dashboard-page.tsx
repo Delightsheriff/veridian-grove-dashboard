@@ -13,9 +13,9 @@ import { useBookings, useRecentStays } from "../bookings/useBookings";
 
 export default function DashboardPage() {
   const { isPending, bookings, count } = useBookings();
-  const { confirmedStays, isLoading: isLoading2, numDays } = useRecentStays();
+  const { confirmedStays, isPending2, numDays } = useRecentStays();
 
-  if (isPending) {
+  if (isPending || isPending2) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="flex flex-col items-center space-y-4">

@@ -96,7 +96,7 @@ export function useRecentStays() {
 
   const queryDate = subDays(new Date(), numDays).toISOString();
 
-  const { isLoading, data: stays } = useQuery({
+  const { isPending2, data: stays } = useQuery({
     queryFn: () => getStaysAfterDate(queryDate),
     queryKey: ["stays", `last-${numDays}`],
   });
@@ -105,15 +105,15 @@ export function useRecentStays() {
     (stay) => stay.status === "checked-in" || stay.status === "checked-out"
   );
 
-  return { isLoading, stays, confirmedStays, numDays };
+  return { isPending2, stays, confirmedStays, numDays };
 }
 
 // This hook fetches today's activity for stays, which includes both checked-in and checked-out stays.
 export function useTodayActivity() {
-  const { isLoading, data: activities } = useQuery({
+  const { isPending, data: activities } = useQuery({
     queryFn: getStaysTodayActivity,
     queryKey: ["today-activity"],
   });
 
-  return { isLoading, activities };
+  return { isPending, activities };
 }
