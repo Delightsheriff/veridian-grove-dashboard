@@ -1,69 +1,64 @@
-# React + TypeScript + Vite
+# Veridian Grove Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern and responsive dashboard for managing hotel bookings, built with React, TypeScript, and Supabase.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+*   **Dashboard:** An overview of key metrics, including sales, check-ins, and occupancy rates.
+*   **Bookings:** View, create, and manage bookings.
+*   **Suites:** Manage hotel suites, including their capacity, price, and amenities.
+*   **Authentication:** Secure user authentication with Supabase.
+*   **Dark Mode:** A sleek dark mode for a better user experience.
+*   **Data Visualization:** Interactive charts to visualize data.
+*   **Real-time Updates:** Real-time data synchronization with Supabase.
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+*   **Frontend:**
+    *   [React](https://reactjs.org/)
+    *   [TypeScript](https://www.typescriptlang.org/)
+    *   [Vite](https://vitejs.dev/)
+    *   [Tailwind CSS](https://tailwindcss.com/)
+    *   [React Router](https://reactrouter.com/)
+    *   [TanStack Query](https://tanstack.com/query/v4/)
+    *   [Radix UI](https://www.radix-ui.com/)
+    *   [Recharts](https://recharts.org/)
+*   **Backend:**
+    *   [Supabase](https://supabase.io/)
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Getting Started
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+To get a local copy up and running, follow these simple steps.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Prerequisites
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+*   Node.js (v14 or later)
+*   npm
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Installation
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1.  Clone the repo
+    ```sh
+    git clone https://github.com/your_username/veridian-grove-dashboard.git
+    ```
+2.  Install NPM packages
+    ```sh
+    npm install
+    ```
+3.  Set up your environment variables by creating a `.env` file in the root of the project and adding the following:
+    ```
+    VITE_SUPABASE_URL=your_supabase_url
+    VITE_SUPABASE_KEY=your_supabase_anon_key
+    ```
+4.  Run the development server
+    ```sh
+    npm run dev
+    ```
+
+## Environment Variables
+
+To run this project, you will need to add the following environment variables to your `.env` file:
+
+`VITE_SUPABASE_URL`: The URL of your Supabase project.
+
+`VITE_SUPABASE_KEY`: The anonymous key of your Supabase project.
